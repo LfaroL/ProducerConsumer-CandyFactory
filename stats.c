@@ -30,7 +30,6 @@ void stats_record_produced(int factory_number){
 }
 
 void stats_record_consumed(int producer_number, double delay_in_ms){
-
 	// add one candy eaten from factory number
 	eaten[producer_number]++;
 
@@ -42,7 +41,6 @@ void stats_record_consumed(int producer_number, double delay_in_ms){
 
 	// increase size of delay amounts in factory
 	delaySize[producer_number]++;
-
 }
 
 void stats_display(void){
@@ -59,6 +57,13 @@ void stats_display(void){
 		// loop through all delay amount for each factory
 		for (int y = 0; y < delaySize[x]; y++){
 
+			// if first delay in array, assign as min
+			if (y == 0){
+				average[x] = 0;
+				min[x] = delay[x][y];
+				max[x] = delay[x][y];
+			}
+
 			// add current delay to total
 			average[x] += delay[x][y];
 			
@@ -67,10 +72,7 @@ void stats_display(void){
 				average[x] = average[x]/delaySize[x];
 			}
 
-			// if first delay in array, assign as min
-			if (y == 0){
-				min[x] = delay[x][y];
-			}
+
 
 			// if current delay is lower, set as min
 			if (min[x] > delay[x][y]){
