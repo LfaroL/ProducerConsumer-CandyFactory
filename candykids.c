@@ -26,24 +26,22 @@ double current_time_in_ms(void){
 
 // function called for all factory threads
 void *factoryThread(void *ptr){
+	// obtain factory number from *ptr
+	int source = *(int*)ptr;
 
 	// seed for random time
 	srand(time(NULL));
-
+	
 	// initialize new candy_t variable
 	candy_t *candy = malloc(sizeof(candy_t));
 
 	// while stop_thread is false
 	while (!stop_thread){
-
 		// random number between 0 to 3
-		int r = rand() % 4;
-
-		// obtain factory number from *ptr
-		int source = *(int*)ptr;
+		int sleep_time = rand() % 4;
 
 		// print which factory made a candy
-		printf("\t Factory %d ship candy and wait %d s\n", source, r);
+		printf("\t Factory %d ship candy and wait %d s\n", source, sleep_time);
 
 		// set source thread to factory number
 		candy->source_thread = source;
@@ -56,7 +54,7 @@ void *factoryThread(void *ptr){
 		stats_record_produced(source);
 
 		// sleep for random amount of seconds
-		sleep(r);
+		sleep(sleep_time);
 
 		// print that factory is done
 		printf("\t Candy-factory %d done\n", source);
@@ -65,24 +63,26 @@ void *factoryThread(void *ptr){
 	// free all candy_t variables dynamically created
 	free(candy);
 
-	// exit thread
+	// exit thread: return NULL
 	pthread_exit(NULL);
 }
 
 // function called for all kid threads
 void *kidThread(void *ptr){
+	int sleep_time;
+
 	// remove candy
 	while (TRUE) {
+		sleep_time = rand() % 2;
 		candy_t* candy = bbuff_blocking_extract();
 
-		// if no candy in counter, then skipped
-		if (candy != NULL){
-			// print which factory candy is being taken from
-			printf("Candy from factory %d has been taken.\n", candy->source_thread);
+		// print which factory candy is being taken from
+		printf("Candy from factory %d has been taken.\n", candy->source_thread);
 
-			// record candy consumed and delay
-			stats_record_consumed(candy->source_thread, current_time_in_ms() - candy->time_stamp_in_ms );
-		}
+		// record candy consumed and delay
+		stats_record_consumed(candy->source_thread, current_time_in_ms() - candy->time_stamp_in_ms);
+	
+		sleep(sleep_time);
 	}
 	// exit thread
 	pthread_exit(NULL);
@@ -121,15 +121,16 @@ int main(int argc, char *argv[]){
 
 	// factory threads array
 	pthread_t tFact[factories];
+
 	// factory ID array
 	int tID[factories];
-
+	for (int x = 0; x < factories; x++) {
+		tID[x] = x;
+	}
 	// loop for same amount of factories
 	for (int x = 0; x < factories; x++){
-		// thread ID
-		tID[x] = x;
 		// create thread with ID passed as the last argument
-		pthread_create(&tFact[x], NULL, &factoryThread, (void *)&tID[x]);
+		pthread_create(&tFact[x], NULL, &factoryThread, &tID[x]);
 	}
 
 	// kid threads array
