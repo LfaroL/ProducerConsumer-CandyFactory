@@ -29,10 +29,10 @@ void bbuff_blocking_insert(void* item){
 	// thread locks mutex before adding
 	pthread_mutex_lock(&mutex);
 
+	// puts value of semaphore full into the counter variable
+	sem_getvalue(&full, &counter);
 	// add candy to buffer
 	buffer[counter] = item;
-	// increment counter
-	counter++;
 
 	// thread unlocks mutex when finished
 	pthread_mutex_unlock(&mutex);
@@ -50,8 +50,10 @@ void* bbuff_blocking_extract(void){
 	// thread locks mutex before extracting
 	pthread_mutex_lock(&mutex);
 
-	// decrement one
-	counter--;
+	// after decrement from sem_wait(&full)
+	// puts value of semaphore full into the counter variable
+	sem_getvalue(&full, &counter);
+	// put item in buffer into void* candy
 	candy = buffer[counter];
 
 	// thread unlocks mutex after extracting
@@ -65,6 +67,7 @@ void* bbuff_blocking_extract(void){
 
 // check if there is still candy in factories
 _Bool bbuff_is_data_available(void){
+	sem_getvalue(&full, &counter);
 	if (counter > 0){
 		return TRUE;
 	}
