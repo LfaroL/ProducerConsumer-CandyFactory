@@ -1,9 +1,9 @@
 # ProducerConsumer-CandyFactory
-Multithreaded Application <br />
+<b>Multithreaded Application</b> <br />
 1. Producer - factories that create candies to be consumed
 2. Consumer - kids that consume candies created by factories<br /><br />
 
-Threads:
+<b>Threads</b>:
 <ul>
   <li>FactoryThread: produces candy and calls method to insert it into the buffer<br />
     <img src="images/factoryThread.png" alt="FactoryThread" height="450">
@@ -13,7 +13,7 @@ Threads:
 </li>
   </ul>
   <br />
-  Semaphores:
+  <b>Semaphores</b>:
   <ul>
   <li>Empty: ensures the buffer has space for thread to insert a new candy</li>
   <li>Full: ensures the buffer has candy for thread to consume<br />
@@ -22,7 +22,7 @@ Threads:
   </li>
   </ul>
   <br />
-Mutex: ensures only one thread accesses the shared buffer to prevent race conditions <br />
+<b>Mutex</b>: ensures only one thread accesses the shared buffer to prevent race conditions <br />
     <img src="images/mutex.png" alt="mutex" height="300">
 
 <br /><br />
