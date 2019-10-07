@@ -1,6 +1,7 @@
 #include <pthread.h>
 #include <semaphore.h>
 #include "bbuff.h"
+#include <stdio.h>
 
 #define TRUE 1
 #define FALSE 0
@@ -32,7 +33,7 @@ void bbuff_blocking_insert(void* item){
 	// puts value of semaphore full into the counter variable
 	sem_getvalue(&full, &counter);
 	// add candy to buffer
-	buffer[counter] = item;
+	buffer[counter] = item;	
 
 	// thread unlocks mutex when finished
 	pthread_mutex_unlock(&mutex);

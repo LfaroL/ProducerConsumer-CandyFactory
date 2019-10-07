@@ -46,7 +46,7 @@ void *factoryThread(void *ptr){
 		candy->source_thread = source;
 		// set to time in milliseconds
 		candy->time_stamp_in_ms = current_time_in_ms();
-		
+
 		// insert candy
 		bbuff_blocking_insert(candy);
 
@@ -55,9 +55,6 @@ void *factoryThread(void *ptr){
 
 		// sleep for random amount of seconds
 		sleep(sleep_time);
-
-		// free all candy_t variables dynamically created
-		free(candy);
 
 		// print that factory is done
 		printf("\t Candy-factory %d done\n", source);
@@ -84,6 +81,9 @@ void *kidThread(void *ptr){
 		// record candy consumed and delay
 		stats_record_consumed(candy->source_thread, current_time_in_ms() - candy->time_stamp_in_ms);
 	
+		// free all candy_t variables dynamically created
+		free(candy);
+
 		sleep(sleep_time);
 	}
 	// exit thread
