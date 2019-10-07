@@ -32,9 +32,6 @@ void *factoryThread(void *ptr){
 	// seed for random time
 	srand(time(NULL));
 	
-	// initialize new candy_t variable
-	candy_t *candy = malloc(sizeof(candy_t));
-
 	// while stop_thread is false
 	while (!stop_thread){
 		// random number between 0 to 3
@@ -43,10 +40,13 @@ void *factoryThread(void *ptr){
 		// print which factory made a candy
 		printf("\t Factory %d ship candy and wait %d s\n", source, sleep_time);
 
+		// initialize new candy_t variable
+		candy_t *candy = malloc(sizeof(candy_t));
 		// set source thread to factory number
 		candy->source_thread = source;
 		// set to time in milliseconds
 		candy->time_stamp_in_ms = current_time_in_ms();
+		
 		// insert candy
 		bbuff_blocking_insert(candy);
 
@@ -56,12 +56,12 @@ void *factoryThread(void *ptr){
 		// sleep for random amount of seconds
 		sleep(sleep_time);
 
+		// free all candy_t variables dynamically created
+		free(candy);
+
 		// print that factory is done
 		printf("\t Candy-factory %d done\n", source);
 	}
-
-	// free all candy_t variables dynamically created
-	free(candy);
 
 	// exit thread: return NULL
 	pthread_exit(NULL);
@@ -74,6 +74,8 @@ void *kidThread(void *ptr){
 	// remove candy
 	while (TRUE) {
 		sleep_time = rand() % 2;
+
+		// get candy from buffer
 		candy_t* candy = bbuff_blocking_extract();
 
 		// print which factory candy is being taken from
@@ -127,6 +129,7 @@ int main(int argc, char *argv[]){
 	for (int x = 0; x < factories; x++) {
 		tID[x] = x;
 	}
+
 	// loop for same amount of factories
 	for (int x = 0; x < factories; x++){
 		// create thread with ID passed as the last argument
